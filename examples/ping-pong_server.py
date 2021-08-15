@@ -5,7 +5,7 @@ from sfp import sfp
 URI = "tcp://localhost"
 # Or use unix domain socket
 if 'unix' in sfp.AVAILABLE_SCHEMES:
-    URI = "unix://tmp/example.sock"
+    URI = "unix:///tmp/example.sock"
 
 
 async def handle(reader: sfp.Reader, writer: sfp.Writer):
