@@ -170,10 +170,12 @@ def get_server_from_uri(uri: str, handle) -> ServerBase:
             port = DEFAULT_TCP_PORT
         return ServerTCP(handle, parsed.host, port)
     else:
-        if parsed.host is None:
+        if parsed.host is None and parsed.path is None:
             raise InvalidUri(uri)
         if parsed.path is None:
             path = parsed.host
+        elif parsed.host is None:
+            path = parsed.path
         else:
             path = parsed.host + parsed.path
         return ServerUnix(handle, path)
@@ -194,10 +196,12 @@ def connect_to_uri(uri: str, loop=None) -> (Reader, Writer):
             port = DEFAULT_TCP_PORT
         return connect_tcp(parsed.host, port, loop=loop)
     else:
-        if parsed.host is None:
+        if parsed.host is None and parsed.path is None:
             raise InvalidUri(uri)
         if parsed.path is None:
             path = parsed.host
+        elif parsed.host is None:
+            path = parsed.path
         else:
             path = parsed.host + parsed.path
         return connect_unix(path, loop=loop)
