@@ -21,7 +21,7 @@ async def handle(reader: sfp.Reader, writer: sfp.Writer):
 
 
 async def main():
-    server = sfp.Server(handle, HOST, PORT)
+    server = sfp.ServerTCP(handle, HOST, PORT)
     await server.run()
 
 if __name__ == '__main__':

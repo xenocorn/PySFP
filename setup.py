@@ -3,11 +3,11 @@ from setuptools import setup
 with open("README.md", "r") as readme_file:
     readme = readme_file.read()
 
-requirements = []
+requirements = ["rfc3986>=1.5"]
 
 setup(
     name="sfp",
-    version="1.0.0",
+    version="2.0.0",
     author="XenoCorn",
     description="Python implementation of SFP",
     long_description=readme,

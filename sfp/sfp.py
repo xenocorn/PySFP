@@ -1,5 +1,17 @@
+from rfc3986 import urlparse
 import asyncio
 import socket
+
+AVAILABLE_SCHEMES = ['tcp']
+DEFAULT_TCP_PORT = 10000
+
+
+class InvalidUri(Exception):
+    pass
+
+
+class UnavailableUriScheme(Exception):
+    pass
 
 
 class Reader:
@@ -59,7 +71,15 @@ class Writer:
         return self.__writer.is_closing()
 
 
-class ServerTCP:
+class ServerBase:
+    async def _my_handle(self, reader, writer):
+        await self.__handle(Reader(reader), Writer(writer))
+
+    async def run(self, loop=None):
+        pass
+
+
+class ServerTCP(ServerBase):
     """
     Wraps TCP server
     """
@@ -68,14 +88,11 @@ class ServerTCP:
         self.__port = port
         self.__handle = handle
 
-    async def __my_handle(self, reader, writer):
-        await self.__handle(Reader(reader), Writer(writer))
-
     async def run(self, loop=None):
         """
         Run server
         """
-        server = await asyncio.start_server(self.__my_handle, self.__host, self.__port, loop=loop)
+        server = await asyncio.start_server(self._my_handle, self.__host, self.__port, loop=loop)
         async with server:
             await server.serve_forever()
 
@@ -89,7 +106,9 @@ async def connect_tcp(host: str, port: int, loop=None) -> (Reader, Writer):
     return Reader(reader), Writer(writer)
 
 if hasattr(socket, 'AF_UNIX'):
-    class ServerUnix:
+    AVAILABLE_SCHEMES.append('unix')
+
+    class ServerUnix(ServerBase):
         """
         Wraps unix domain socket server
         """
@@ -97,14 +116,11 @@ if hasattr(socket, 'AF_UNIX'):
             self.__path = path
             self.__handle = handle
 
-        async def __my_handle(self, reader, writer):
-            await self.__handle(Reader(reader), Writer(writer))
-
         async def run(self, loop=None):
             """
             Run server
             """
-            server = await asyncio.start_unix_server(self.__my_handle, self.__path, loop=loop)
+            server = await asyncio.start_unix_server(self._my_handle, self.__path, loop=loop)
             async with server:
                 await server.serve_forever()
 
@@ -116,3 +132,51 @@ if hasattr(socket, 'AF_UNIX'):
         """
         reader, writer = await asyncio.open_unix_connection(path, loop=loop)
         return Reader(reader), Writer(writer)
+
+
+def get_server_from_uri(uri: str, handle) -> ServerBase:
+    """
+    Selecting server class based on uri
+    """
+    parsed = urlparse(uri)
+    if parsed.scheme not in AVAILABLE_SCHEMES:
+        raise UnavailableUriScheme(uri)
+    if parsed.scheme == 'tcp':
+        port = parsed.port
+        if parsed.host is None:
+            raise InvalidUri(uri)
+        if parsed.port is None:
+            port = DEFAULT_TCP_PORT
+        return ServerTCP(handle, parsed.host, port)
+    else:
+        if parsed.host is None:
+            raise InvalidUri(uri)
+        if parsed.path is None:
+            path = parsed.host
+        else:
+            path = parsed.host + parsed.path
+        return ServerUnix(handle, path)
+
+
+def connect_to_uri(uri: str, loop=None) -> (Reader, Writer):
+    """
+    Selecting connection type based on uri
+    """
+    parsed = urlparse(uri)
+    if parsed.scheme not in AVAILABLE_SCHEMES:
+        raise UnavailableUriScheme(uri)
+    if parsed.scheme == 'tcp':
+        port = parsed.port
+        if parsed.host is None:
+            raise InvalidUri(uri)
+        if parsed.port is None:
+            port = DEFAULT_TCP_PORT
+        return connect_tcp(parsed.host, port, loop=loop)
+    else:
+        if parsed.host is None:
+            raise InvalidUri(uri)
+        if parsed.path is None:
+            path = parsed.host
+        else:
+            path = parsed.host + parsed.path
+        return connect_unix(path, loop=loop)
