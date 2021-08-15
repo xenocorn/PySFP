@@ -3,7 +3,6 @@ from sfp import sfp
 
 # Use tcp socket on non unix OS
 URI = "tcp://localhost"
-
 # Or use unix domain socket
 if 'unix' in sfp.AVAILABLE_SCHEMES:
     URI = "unix://tmp/example.sock"
