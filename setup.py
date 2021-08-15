@@ -7,7 +7,7 @@ requirements = []
 
 setup(
     name="sfp",
-    version="0.1.0",
+    version="1.0.0",
     author="XenoCorn",
     description="Python implementation of SFP",
     long_description=readme,
@@ -16,7 +16,7 @@ setup(
     packages=['sfp'],
     install_requires=requirements,
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: BSD License",
         "Topic :: Internet",
     ],
