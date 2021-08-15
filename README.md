@@ -4,4 +4,4 @@ over TCP and unix domain sockets
 ## Instalation
     $ pip install sfp
 ## Usage
-See [examples](https://github.com/xenocorn/PySFP/tree/master/src/examples)
+See [examples](https://github.com/xenocorn/PySFP/tree/master/examples)
