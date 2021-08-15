@@ -14,7 +14,7 @@ URI = "tcp://localhost"
 
 # Or use unix domain socket
 if 'unix' in sfp.AVAILABLE_SCHEMES:
-    URI = "unix://tmp/example.sock"
+    URI = "unix:///tmp/example.sock"
     
 async def main():
     reader, writer = await sfp.connect_to_uri(URI)
@@ -40,7 +40,7 @@ URI = "tcp://localhost"
 
 # Or use unix domain socket
 if 'unix' in sfp.AVAILABLE_SCHEMES:
-    URI = "unix://tmp/example.sock"
+    URI = "unix:///tmp/example.sock"
 
 async def handle(reader: sfp.Reader, writer: sfp.Writer):
     # Connection accepted
