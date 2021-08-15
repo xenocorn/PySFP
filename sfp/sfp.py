@@ -70,6 +70,24 @@ class Writer:
         """
         return self.__writer.is_closing()
 
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        try:
+            self.close_nowait()
+        except:
+            pass
+
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        try:
+            await self.close()
+        except:
+            pass
+
 
 class ServerBase:
     async def run(self, loop=None):

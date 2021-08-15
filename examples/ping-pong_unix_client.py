@@ -1,12 +1,12 @@
 from asyncio import get_event_loop, sleep
 from sfp import sfp
 
-HOST, PORT = '127.0.0.1', 9999
+SOCKET = "/tmp/example.sock"
 
 
 async def main():
-    reader, writer = await sfp.connect_tcp(HOST, PORT)
-    print("Connected to", HOST, PORT)
+    reader, writer = await sfp.connect_unix(SOCKET)
+    print("Connected to", SOCKET)
     try:
         async with writer:
             while True:

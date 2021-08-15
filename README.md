@@ -18,10 +18,13 @@ if 'unix' in sfp.AVAILABLE_SCHEMES:
     
 async def main():
     reader, writer = await sfp.connect_to_uri(URI)
-    writer.write("SOME DATA".encode())
-    data = await reader.read()
-    print(data.decode())
-    await writer.close()
+    try:
+        async with writer:
+            writer.write("SOME DATA".encode())
+            data = await reader.read()
+            print(data.decode())
+    except:
+        pass # Connection closed unexpectedly
 
 if __name__ == '__main__':
     loop = get_event_loop()
@@ -42,12 +45,13 @@ if 'unix' in sfp.AVAILABLE_SCHEMES:
 async def handle(reader: sfp.Reader, writer: sfp.Writer):
     # Connection accepted
     try:
-        data = await reader.read()
-        print(data.decode())
-        writer.write("SOME DATA".encode())
-        await reader.read()
+        async with writer:
+            data = await reader.read()
+            print(data.decode())
+            writer.write("SOME DATA".encode())
+            await writer.drain()
     except:
-        pass #Connection closed
+        pass # Connection closed unexpectedly
 
 async def main():
     reader, writer = await sfp.connect_to_uri(URI)

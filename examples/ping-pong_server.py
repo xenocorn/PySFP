@@ -1,7 +1,12 @@
 from asyncio import get_event_loop
 from sfp import sfp
 
-HOST, PORT = '127.0.0.1', 9999
+# Use tcp socket on non unix OS
+URI = "tcp://localhost"
+
+# Or use unix domain socket
+if 'unix' in sfp.AVAILABLE_SCHEMES:
+    URI = "unix://tmp/example.sock"
 
 
 async def handle(reader: sfp.Reader, writer: sfp.Writer):
@@ -22,7 +27,7 @@ async def handle(reader: sfp.Reader, writer: sfp.Writer):
 
 
 async def main():
-    server = sfp.ServerTCP(handle, HOST, PORT)
+    server = sfp.get_server_from_uri(URI, handle)
     await server.run()
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from asyncio import get_event_loop
 from sfp import sfp
 
-HOST, PORT = '127.0.0.1', 9999
+SOCKET = "/tmp/example.sock"
 
 
 async def handle(reader: sfp.Reader, writer: sfp.Writer):
@@ -22,7 +22,7 @@ async def handle(reader: sfp.Reader, writer: sfp.Writer):
 
 
 async def main():
-    server = sfp.ServerTCP(handle, HOST, PORT)
+    server = sfp.ServerUnix(handle, SOCKET)
     await server.run()
 
 if __name__ == '__main__':

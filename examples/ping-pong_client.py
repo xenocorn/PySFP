@@ -1,12 +1,17 @@
 from asyncio import get_event_loop, sleep
 from sfp import sfp
 
-HOST, PORT = '127.0.0.1', 9999
+# Use tcp socket on non unix OS
+URI = "tcp://localhost"
+
+# Or use unix domain socket
+if 'unix' in sfp.AVAILABLE_SCHEMES:
+    URI = "unix://tmp/example.sock"
 
 
 async def main():
-    reader, writer = await sfp.connect_tcp(HOST, PORT)
-    print("Connected to", HOST, PORT)
+    reader, writer = await sfp.connect_to_uri(URI)
+    print("Connected to", URI)
     try:
         async with writer:
             while True:
