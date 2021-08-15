@@ -25,13 +25,13 @@ class Writer:
     def __init__(self, writer):
         self.__writer = writer
 
-    def write(self, payload: bytes):
+    def write(self, frame: bytes):
         """
-        Write payload to stream
+        Write frame to stream
         """
-        header = len(payload).to_bytes(4, byteorder='big')
+        header = len(frame).to_bytes(4, byteorder='big')
         self.__writer.write(header)
-        self.__writer.write(payload)
+        self.__writer.write(frame)
 
     async def drain(self):
         """
@@ -59,7 +59,7 @@ class Writer:
         return self.__writer.is_closing()
 
 
-class Server:
+class ServerTCP:
     """
     Wraps TCP server
     """
@@ -80,7 +80,7 @@ class Server:
             await server.serve_forever()
 
 
-async def connect(host: str, port: int, loop=None) -> (Reader, Writer):
+async def connect_tcp(host: str, port: int, loop=None) -> (Reader, Writer):
     """
     Connect to SFP over TCP server
     Returns socket reader and writer objects
