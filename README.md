@@ -8,13 +8,12 @@ over TCP and unix domain sockets
 ```Python
 from asyncio import get_event_loop
 from sfp import sfp
-import socket
 
 # Use tcp socket on non unix OS
 URI = "tcp://localhost"
 
 # Or use unix domain socket
-if hasattr(socket, 'AF_UNIX'):
+if 'unix' in sfp.AVAILABLE_SCHEMES:
     URI = "unix://tmp/example.sock"
     
 async def main():
@@ -32,13 +31,12 @@ if __name__ == '__main__':
 ```Python
 from asyncio import get_event_loop
 from sfp import sfp
-import socket
 
 # Use tcp socket on non unix OS
 URI = "tcp://localhost"
 
 # Or use unix domain socket
-if hasattr(socket, 'AF_UNIX'):
+if 'unix' in sfp.AVAILABLE_SCHEMES:
     URI = "unix://tmp/example.sock"
 
 async def handle(reader: sfp.Reader, writer: sfp.Writer):
