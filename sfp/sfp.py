@@ -72,9 +72,6 @@ class Writer:
 
 
 class ServerBase:
-    async def _my_handle(self, reader, writer):
-        await self.__handle(Reader(reader), Writer(writer))
-
     async def run(self, loop=None):
         pass
 
@@ -87,6 +84,9 @@ class ServerTCP(ServerBase):
         self.__host = host
         self.__port = port
         self.__handle = handle
+
+    async def _my_handle(self, reader, writer):
+        await self.__handle(Reader(reader), Writer(writer))
 
     async def run(self, loop=None):
         """
@@ -115,6 +115,9 @@ if hasattr(socket, 'AF_UNIX'):
         def __init__(self, handle, path: str):
             self.__path = path
             self.__handle = handle
+
+        async def _my_handle(self, reader, writer):
+            await self.__handle(Reader(reader), Writer(writer))
 
         async def run(self, loop=None):
             """

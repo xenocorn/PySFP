@@ -7,7 +7,7 @@ requirements = ["rfc3986>=1.5"]
 
 setup(
     name="sfp",
-    version="2.0.0",
+    version="2.0.1",
     author="XenoCorn",
     description="Python implementation of SFP",
     long_description=readme,
